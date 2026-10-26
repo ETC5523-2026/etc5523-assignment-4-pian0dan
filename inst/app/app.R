@@ -12,9 +12,12 @@ library(thematic)
 library(vicptpatronage)
 
 modes <- levels(vicptpatronage::monthly_patronage$mode)
-data_min_date <- min(vicptpatronage::monthly_patronage$date)
 data_max_date <- max(vicptpatronage::monthly_patronage$date)
 reference_year <- 2019
+# The chart's selectable range starts the year after the reference year, so
+# the reference year (whose index is always exactly 100, by construction)
+# never has to be displayed or bridged over with a gap.
+chart_min_date <- as.Date(sprintf("%d-01-01", reference_year + 1))
 
 # Collapse the free_travel_period flag into contiguous date ranges, so the
 # chart can shade whole blocks rather than one rectangle per month.
@@ -49,9 +52,9 @@ ui <- page_sidebar(
         dateRangeInput(
           "date_range",
           "Date range",
-          start = "2018-01-01",
+          start = chart_min_date,
           end = data_max_date,
-          min = data_min_date,
+          min = chart_min_date,
           max = data_max_date
         ),
         input_switch(
@@ -89,9 +92,8 @@ ui <- page_sidebar(
           "seasonal swings for changes in recovery."
         ),
         p(
-          "2019 itself is left off the chart: since every 2019 month is ",
-          "compared to itself, it would only show as an uninformative ",
-          "flat line at 100."
+          "The chart starts in 2020: every 2019 month is compared to ",
+          "itself, so 2019 has no meaningful index value to plot."
         )
       )
     )
@@ -150,11 +152,7 @@ server <- function(input, output, session) {
       mode %in%
         input$modes &
         date >= input$date_range[1] &
-        date <= input$date_range[2] &
-        # Every month in the reference year is, by construction, exactly
-        # 100% of itself. Plotting it adds a flat, uninformative line that
-        # looks like a charting error rather than a real pattern.
-        year != reference_year
+        date <= input$date_range[2]
     )
   })
 
@@ -212,6 +210,7 @@ server <- function(input, output, session) {
     )
 
     plot_data <- filtered()
+
     p <- ggplot(plot_data, aes(date, index, color = mode)) +
       geom_hline(yintercept = 100, linetype = "dashed", color = "grey50") +
       geom_line(linewidth = 0.9) +
