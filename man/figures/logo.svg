@@ -14,7 +14,7 @@
     </style>
   </defs>
 
-  <circle cx="128" cy="128" r="124" fill="#FBFBFA" stroke="#206b82" stroke-width="6"/>
+  <polygon points="128,10 230.2,69 230.2,187 128,246 25.8,187 25.8,69" fill="#FBFBFA" stroke="#206b82" stroke-width="6" stroke-linejoin="round"/>
 
   <!-- smoke puffs -->
   <circle class="smoke" cx="188" cy="58" r="12"/>
