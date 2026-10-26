@@ -13,6 +13,21 @@ library(vicptpatronage)
 
 modes <- levels(vicptpatronage::monthly_patronage$mode)
 data_max_date <- max(vicptpatronage::monthly_patronage$date)
+
+# Official Public Transport Victoria mode colours (PTV Master Style Guide
+# 2018): blue for metropolitan train, green for tram, orange for bus, and
+# purple for regional services. PTV only defines one "Regional" purple for
+# train/coach branding (#8F1A95); the other two shades are drawn from the
+# style guide's regional network palette so the three regional modes stay
+# visually distinct while remaining recognisably "PTV purple".
+mode_colors <- c(
+  "Metropolitan train" = "#0072CE",
+  "Metropolitan tram" = "#78BE20",
+  "Metropolitan bus" = "#FF8200",
+  "Regional train" = "#8F1A95",
+  "Regional coach" = "#642667",
+  "Regional bus" = "#B580D1"
+)
 reference_year <- 2019
 # The chart's selectable range starts the year after the reference year, so
 # the reference year (whose index is always exactly 100, by construction)
@@ -214,6 +229,7 @@ server <- function(input, output, session) {
     p <- ggplot(plot_data, aes(date, index, color = mode)) +
       geom_hline(yintercept = 100, linetype = "dashed", color = "grey50") +
       geom_line(linewidth = 0.9) +
+      scale_color_manual(values = mode_colors) +
       labs(
         x = NULL,
         y = "Patronage index (same month, 2019 = 100)",
