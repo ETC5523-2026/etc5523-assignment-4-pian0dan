@@ -214,22 +214,8 @@ ui <- page_sidebar(
   layout_column_wrap(
     width = 1 / 2,
     fill = FALSE,
-    value_box(
-      title = "Most recovered mode (selected range)",
-      value = textOutput("most_recovered_label"),
-      showcase = textOutput("most_recovered_value"),
-      # secondary = green (sourced from Transport Victoria's "success"
-      # token): reads as the positive finding.
-      theme = "secondary"
-    ),
-    value_box(
-      title = "Least recovered mode (selected range)",
-      value = textOutput("least_recovered_label"),
-      showcase = textOutput("least_recovered_value"),
-      # primary = teal: a neutral colour, since "least recovered" isn't
-      # necessarily bad, just relatively lower.
-      theme = "primary"
-    )
+    uiOutput("most_recovered_box"),
+    uiOutput("least_recovered_box")
   ),
   card(
     full_screen = TRUE,
@@ -290,33 +276,44 @@ server <- function(input, output, session) {
     do.call(rbind, lapply(split(d, d$mode), function(x) x[nrow(x), ]))
   })
 
-  output$most_recovered_label <- renderText({
-    d <- latest_by_mode()
+  # Theme each value box's background to match the line colour of the
+  # mode it's highlighting, so the "most/least recovered" callouts read
+  # as a direct pointer back to a specific line in the chart below.
+  recovered_box <- function(d, which = c("max", "min"), title) {
+    which <- match.arg(which)
     if (is.null(d) || nrow(d) == 0) {
-      return("-")
+      return(
+        value_box(
+          title = title,
+          value = "-",
+          showcase = "",
+          theme = "secondary"
+        )
+      )
     }
-    as.character(d$mode[which.max(d$index)])
+    i <- if (which == "max") which.max(d$index) else which.min(d$index)
+    mode <- as.character(d$mode[i])
+    value_box(
+      title = title,
+      value = mode,
+      showcase = sprintf("Index %.0f", d$index[i]),
+      theme = value_box_theme(bg = mode_colors[[mode]])
+    )
+  }
+
+  output$most_recovered_box <- renderUI({
+    recovered_box(
+      latest_by_mode(),
+      which = "max",
+      title = "Most recovered mode (selected range)"
+    )
   })
-  output$most_recovered_value <- renderText({
-    d <- latest_by_mode()
-    if (is.null(d) || nrow(d) == 0) {
-      return("")
-    }
-    sprintf("Index %.0f", max(d$index))
-  })
-  output$least_recovered_label <- renderText({
-    d <- latest_by_mode()
-    if (is.null(d) || nrow(d) == 0) {
-      return("-")
-    }
-    as.character(d$mode[which.min(d$index)])
-  })
-  output$least_recovered_value <- renderText({
-    d <- latest_by_mode()
-    if (is.null(d) || nrow(d) == 0) {
-      return("")
-    }
-    sprintf("Index %.0f", min(d$index))
+  output$least_recovered_box <- renderUI({
+    recovered_box(
+      latest_by_mode(),
+      which = "min",
+      title = "Least recovered mode (selected range)"
+    )
   })
 
   output$trend_plot <- renderPlotly({
