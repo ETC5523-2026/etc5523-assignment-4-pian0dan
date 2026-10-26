@@ -2,7 +2,7 @@ Package: vicptpatronage
 Title: Explore Victorian Public Transport Patronage Trends
 Version: 0.0.0.9000
 Authors@R: 
-    person("pian0dan", , , "pian0dan@users.noreply.github.com", role = c("aut", "cre"))
+    person("Daniel", , "Loza", "dloz0001@student.monash.edu", role = c("aut", "cre","cph"))
 Description: Provides a cleaned, tidy monthly time series of Victorian
     public transport patronage by mode (metropolitan train, tram and
     bus; V/Line train and coach; regional bus) from 2018 onwards,
