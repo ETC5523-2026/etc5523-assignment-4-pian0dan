@@ -2,31 +2,37 @@
 % Please edit documentation in R/patronage_index.R
 \name{patronage_index}
 \alias{patronage_index}
-\title{Index monthly patronage to a baseline month}
+\title{Index monthly patronage to the same calendar month in a reference year}
 \usage{
-patronage_index(data, baseline_date = "2020-01-01")
+patronage_index(data, reference_year = 2019)
 }
 \arguments{
 \item{data}{A data frame with the same structure as \link{monthly_patronage},
-containing at least the columns \code{date}, \code{mode} and \code{patronage}.}
+containing at least the columns \code{date}, \code{year}, \code{month}, \code{mode} and
+\code{patronage}.}
 
-\item{baseline_date}{A \code{Date}, or a string coercible to one (e.g.
-\code{"2020-01-01"}), giving the month to use as the index base (100).
-Matched to the first day of the month.}
+\item{reference_year}{An integer giving the year whose monthly values
+are used as the 100 baseline for the matching calendar month. Defaults
+to 2019, the last full year before the COVID-19 pandemic affected
+patronage.}
 }
 \value{
 A data frame with the same rows as \code{data}, plus an \code{index}
-column giving each mode's patronage as a percentage of its value in
-\code{baseline_date}.
+column giving each mode's patronage as a percentage of the same
+calendar month's patronage in \code{reference_year}.
 }
 \description{
-Rescales each mode's monthly patronage so that a chosen baseline month
-equals 100, making it possible to compare the relative recovery of modes
-with very different patronage volumes (e.g. metropolitan train vs.
-regional coach).
+Rescales each mode's monthly patronage as a percentage of that \emph{same
+calendar month} in a chosen reference year (e.g. March is compared to
+the reference year's March, January to the reference year's January).
+This avoids conflating genuine recovery with ordinary seasonal
+variation: Victorian metropolitan train patronage, for example, is
+routinely 30-35\% higher in March or May than in January even in
+pre-pandemic years, so indexing every month to a single fixed baseline
+month would make seasonal swings look like changes in recovery.
 }
 \examples{
-indexed <- patronage_index(monthly_patronage, baseline_date = "2020-01-01")
+indexed <- patronage_index(monthly_patronage, reference_year = 2019)
 head(indexed)
 
 }
