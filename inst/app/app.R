@@ -14,19 +14,32 @@ library(vicptpatronage)
 modes <- levels(vicptpatronage::monthly_patronage$mode)
 data_max_date <- max(vicptpatronage::monthly_patronage$date)
 
-# Official Public Transport Victoria mode colours (PTV Master Style Guide
-# 2018): blue for metropolitan train, green for tram, orange for bus, and
-# purple for regional services. PTV only defines one "Regional" purple for
-# train/coach branding (#8F1A95); the other two shades are drawn from the
-# style guide's regional network palette so the three regional modes stay
-# visually distinct while remaining recognisably "PTV purple".
+# Official Public Transport Victoria mode colours, taken directly from the
+# DTP's "Transport Pictograms" asset files (CC BY 4.0; see
+# inst/app/www/icons/ATTRIBUTION.md): blue for metropolitan train, green for
+# tram, orange for bus, and purple for regional services. PTV's pictogram
+# set only distinguishes two regional shades (train, coach); "Regional bus"
+# has no official colour of its own, so it uses a third purple interpolated
+# between the two official regional shades to stay visually distinct.
 mode_colors <- c(
   "Metropolitan train" = "#0072CE",
   "Metropolitan tram" = "#78BE20",
   "Metropolitan bus" = "#FF8200",
-  "Regional train" = "#8F1A95",
-  "Regional coach" = "#642667",
-  "Regional bus" = "#B580D1"
+  "Regional train" = "#7F0D82",
+  "Regional coach" = "#A57FB2",
+  "Regional bus" = "#92469A"
+)
+
+# Pictogram shown next to each mode in the filter checkboxes. PTV has no
+# distinct symbol for regional (vs. metropolitan) bus, so both share the
+# generic bus icon.
+mode_icons <- c(
+  "Metropolitan train" = "icons/train.png",
+  "Metropolitan tram" = "icons/tram.png",
+  "Metropolitan bus" = "icons/bus.png",
+  "Regional train" = "icons/regional_train.png",
+  "Regional coach" = "icons/coach.png",
+  "Regional bus" = "icons/bus.png"
 )
 reference_year <- 2019
 # The chart's selectable range starts the year after the reference year, so
@@ -61,7 +74,17 @@ ui <- page_sidebar(
         checkboxGroupInput(
           "modes",
           "Mode(s) to display",
-          choices = modes,
+          choiceNames = lapply(modes, function(m) {
+            tagList(
+              tags$img(
+                src = mode_icons[[m]],
+                height = "20px",
+                style = "vertical-align:middle;margin-right:6px;"
+              ),
+              m
+            )
+          }),
+          choiceValues = modes,
           selected = modes
         ),
         dateRangeInput(
@@ -90,7 +113,9 @@ ui <- page_sidebar(
         p(
           "Data: monthly patron boardings by mode, Jan 2018 onward, from ",
           "the Victorian Department of Transport and Planning Open Data ",
-          "portal (CC BY 4.0)."
+          "portal (CC BY 4.0). Mode icons are the Department's official ",
+          "Transport Pictograms (CC BY 4.0); there is no distinct official ",
+          "icon for regional bus, so it shares the metropolitan bus icon."
         ),
         p(
           "Shaded bands mark Victoria's 2025-2026 free-travel periods, ",
