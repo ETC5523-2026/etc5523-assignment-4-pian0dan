@@ -21,7 +21,8 @@ Imports:
     bslib,
     ggplot2,
     magrittr,
-    shiny
+    shiny,
+    thematic
 Depends: 
     R (>= 3.5)
 LazyData: true
