@@ -84,37 +84,32 @@ fare_period_colors <- c(
   "Half-price fares" = "#A6A6A6"
 )
 
-# Colour theming for the app's chrome (sidebar, cards, buttons, headings),
-# inspired by the Victorian Government's broader navy-and-gold digital
-# brand used across vic.gov.au properties (Transport Victoria's own
-# pages block automated fetches, so this draws on the shared state
-# government palette rather than scraping their exact CSS). Note this is
-# distinct from `mode_colors` above, which must stay fixed to PTV's
-# official per-mode colours for the data encoding to remain meaningful.
+# Colour theming for the app's chrome (sidebar, cards, buttons, headings).
+# transport.vic.gov.au itself blocks automated fetches, so these values
+# are taken from the stylesheet actually served by the Department of
+# Transport and Planning's Open Data portal (the same department behind
+# Transport Victoria), fetched directly from:
+# https://opendata.transport.vic.gov.au/webassets/base/1c87a999_main.css
+#   --bs-primary / .btn-primary background: #206b82 (teal-blue)
+#   --bs-success: #3A833A (green) - repurposed here as the app's accent
+#   .accordion-button:not(.collapsed) background: #e9f0f3
+#   body font: no custom webfont is loaded; it relies on the Bootstrap
+#   default system sans-serif stack, which this theme also uses.
+# This is distinct from `mode_colors` above, which must stay fixed to
+# PTV's official per-mode colours for the data encoding to remain
+# meaningful; only the surrounding chrome is themed here.
 app_theme <- bs_theme(
   version = 5,
   bg = "#FBFBFA",
   fg = "#1B1B1B",
-  primary = "#0C2340", # Victorian Government navy
-  secondary = "#C9A227", # warm gold accent
-  base_font = font_collection(
-    font_google("Public Sans", local = TRUE),
-    "Helvetica Neue",
-    "Arial",
-    "sans-serif"
-  ),
-  heading_font = font_collection(
-    font_google("Public Sans", wght = 700, local = TRUE),
-    "Helvetica Neue",
-    "Arial",
-    "sans-serif"
-  )
+  primary = "#206b82",
+  secondary = "#3A833A"
 ) |>
   bs_add_rules(
     "
-    .card { border-radius: 0.65rem; box-shadow: 0 2px 10px rgba(12, 35, 64, 0.08); }
+    .card { border-radius: 0.65rem; box-shadow: 0 2px 10px rgba(32, 107, 130, 0.1); }
     .accordion-button:not(.collapsed) {
-      background-color: rgba(12, 35, 64, 0.07);
+      background-color: #e9f0f3;
       color: $primary;
     }
     "
