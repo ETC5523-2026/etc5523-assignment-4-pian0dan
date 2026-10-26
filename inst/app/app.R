@@ -70,7 +70,14 @@ fare_period_rects <- function(data, period) {
   )
 }
 
-fare_period_colors <- c("Free travel" = "grey45", "Half-price fares" = "grey80")
+# Shading intensity roughly tracks discount intensity: weekend-only free
+# travel affected far fewer days per month than the later every-day free
+# and half-price periods.
+fare_period_colors <- c(
+  "Weekend free travel" = "grey88",
+  "Free travel (every day)" = "grey40",
+  "Half-price fares" = "grey65"
+)
 
 ui <- page_sidebar(
   title = "Victorian public transport patronage recovery",
@@ -129,18 +136,24 @@ ui <- page_sidebar(
           "recoloured to match its line colour above."
         ),
         p(
-          "Dark bands mark ",
-          strong("free travel"),
-          " (Dec 2025-May 2026) and light bands mark ",
+          "Shaded bands mark three fare-discount periods of increasing ",
+          "intensity: a pale band for ",
+          strong("weekend-only free travel"),
+          " (Dec 2025-Jan 2026, free on weekends only), a medium band for ",
           strong("half-price fares"),
-          " (from Jun 2026). Patronage in both periods is inflated by the ",
+          " (from Jun 2026, every day), and a dark band for ",
+          strong("free travel every day"),
+          " (Apr-May 2026). Patronage in all three is inflated by the ",
           "discount itself, not by organic recovery, so treat any ",
           "apparent gains during these bands with caution."
         ),
         p(
-          "Dec 2025-Mar 2026 is documented in the source dataset's own ",
-          "data quality notes. The extension of free travel through ",
-          "April-May 2026, and half-price fares from June 2026, are not ",
+          "Weekend-only free travel (30 Nov 2025-1 Feb 2026) and a single ",
+          "free weekday (31 Mar 2026) are documented in the source ",
+          "dataset's own data quality notes; the single free day in Feb ",
+          "and Mar 2026 is too small a share of those months to flag ",
+          "separately. The later extension to free travel every day ",
+          "(Apr-May 2026), and half-price fares from June 2026, are not ",
           "yet reflected in that dataset's documentation; these dates are ",
           "instead sourced from official Victorian Government media ",
           "releases (Premier of Victoria, 19 Apr 2026; Transport ",
@@ -278,9 +291,15 @@ server <- function(input, output, session) {
     p <- ggplot(plot_data, aes(date, index, color = mode))
 
     if (isTRUE(input$show_fare_periods)) {
-      rects <- rbind(
-        fare_period_rects(vicptpatronage::monthly_patronage, "Free travel"),
-        fare_period_rects(vicptpatronage::monthly_patronage, "Half-price fares")
+      rects <- do.call(
+        rbind,
+        lapply(
+          setdiff(
+            levels(vicptpatronage::monthly_patronage$fare_period),
+            "Normal fares"
+          ),
+          function(p) fare_period_rects(vicptpatronage::monthly_patronage, p)
+        )
       )
       rects <- rects[
         rects$xmax >= input$date_range[1] & rects$xmin <= input$date_range[2],

@@ -15,10 +15,10 @@ A data frame with one row per mode per month, and columns:
 Metropolitan bus, Regional train, Regional coach, or Regional bus.}
 \item{patronage}{Count of patron boardings for that mode and month.}
 \item{fare_period}{Factor flagging months substantially affected by a
-Victorian Government fare discount: \code{"Normal fares"}, \code{"Free travel"} (Dec 2025-May 2026) or \code{"Half-price fares"} (from Jun
-2026). Patronage during these months is expected to be inflated by
-the discount itself and should not be read as organic recovery or
-demand growth; see Details.}
+Victorian Government fare discount: \code{"Normal fares"}, \code{"Weekend free travel"} (Dec 2025-Jan 2026, weekends only), \code{"Free travel (every day)"} (Apr-May 2026) or \code{"Half-price fares"} (from Jun
+2026). Patronage during non-"Normal fares" months is expected to be
+inflated by the discount itself and should not be read as organic
+recovery or demand growth; see Details.}
 }
 }
 \source{
@@ -42,15 +42,19 @@ One data quality issue was corrected during preparation: the raw
 extracted as the true value; see \code{data-raw/monthly_patronage.R} for the
 full justification and cleaning code.
 
-\code{fare_period} draws on two source tiers. Free weekend travel (30 Nov
-2025-1 Feb 2026) and free weekday travel (31 Mar 2026) are documented in
-the source dataset's own "Data Quality" notes. The subsequent extension
-of free travel through April-May 2026, and half-price fares from 1 June
-2026, are not mentioned in the dataset's documentation (as at the time
-this package's data was last refreshed) and are instead sourced from
-official Victorian Government media releases: the Premier's "Extra Month
-Of Free PT - Then Half-Price Fares For All" (19 Apr 2026) and Transport
-Victoria's "Public transport now half price for everyone" (22 May
-2026). See \code{data-raw/monthly_patronage.R} for full source URLs.
+\code{fare_period} draws on two source tiers. Free WEEKEND travel only (30
+Nov 2025-1 Feb 2026) and a single free weekday (31 Mar 2026) are
+documented in the source dataset's own "Data Quality" notes; Dec 2025
+and Jan 2026 are flagged \code{"Weekend free travel"}, while Feb and Mar
+2026 are left as \code{"Normal fares"} since only a single day of each month
+was affected. The subsequent extension to genuinely continuous
+(every-day) free travel through April-May 2026, and half-price fares
+from 1 June 2026, are not mentioned in the dataset's documentation (as
+at the time this package's data was last refreshed) and are instead
+sourced from official Victorian Government media releases: the
+Premier's "Extra Month Of Free PT - Then Half-Price Fares For All" (19
+Apr 2026) and Transport Victoria's "Public transport now half price for
+everyone" (22 May 2026). See \code{data-raw/monthly_patronage.R} for full
+source URLs.
 }
 \keyword{datasets}
