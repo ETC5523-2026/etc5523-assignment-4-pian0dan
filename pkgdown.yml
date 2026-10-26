@@ -1,0 +1,9 @@
+pandoc: 3.8.3
+pkgdown: 2.2.1
+pkgdown_sha: ~
+articles:
+  vicptpatronage: vicptpatronage.html
+last_built: 2026-10-26T07:41Z
+urls:
+  reference: https://etc5523-2026.github.io/etc5523-assignment-4-pian0dan/reference
+  article: https://etc5523-2026.github.io/etc5523-assignment-4-pian0dan/articles
