@@ -218,13 +218,17 @@ ui <- page_sidebar(
       title = "Most recovered mode (selected range)",
       value = textOutput("most_recovered_label"),
       showcase = textOutput("most_recovered_value"),
-      theme = "primary"
+      # secondary = green (sourced from Transport Victoria's "success"
+      # token): reads as the positive finding.
+      theme = "secondary"
     ),
     value_box(
       title = "Least recovered mode (selected range)",
       value = textOutput("least_recovered_label"),
       showcase = textOutput("least_recovered_value"),
-      theme = "secondary"
+      # primary = teal: a neutral colour, since "least recovered" isn't
+      # necessarily bad, just relatively lower.
+      theme = "primary"
     )
   ),
   card(
