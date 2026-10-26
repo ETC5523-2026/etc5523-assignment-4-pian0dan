@@ -17,3 +17,9 @@ run_app(...)
 
   Additional arguments passed on to
   [`shiny::runApp()`](https://rdrr.io/pkg/shiny/man/runApp.html).
+
+## Value
+
+No return value. This function is called for its side effect of
+launching the Shiny app in the default web browser (or RStudio/Positron
+viewer pane).
