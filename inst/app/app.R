@@ -35,6 +35,9 @@ chart_min_date <- as.Date(sprintf("%d-01-01", reference_year + 1))
 ui <- page_sidebar(
   title = "Victorian public transport patronage recovery",
   theme = app_theme,
+  tags$head(
+    tags$link(rel = "icon", type = "image/png", href = "favicon-v2.png")
+  ),
   # Light grey canvas behind the main content so the white cards/value
   # boxes read as a dashboard-style layout; purely a CSS class, no
   # structural change.
