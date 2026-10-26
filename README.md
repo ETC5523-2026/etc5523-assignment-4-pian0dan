@@ -1,4 +1,4 @@
-# vicptpatronage
+# vicptpatronage <img src="man/figures/logo.png" align="right" height="139" alt="" />
 
 <!-- badges: start -->
 [![pkgdown](https://github.com/ETC5523-2026/etc5523-assignment-4-pian0dan/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/ETC5523-2026/etc5523-assignment-4-pian0dan/actions/workflows/pkgdown.yaml)
