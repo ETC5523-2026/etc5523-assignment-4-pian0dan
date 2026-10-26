@@ -368,6 +368,17 @@ server <- function(input, output, session) {
         legend = list(title = list(text = "Mode"))
       )
 
+    # plotly.js auto-picks hover label text colour from the trace's
+    # background colour; "Regional coach"'s lighter purple (#A57FB2) gets
+    # dark text by default, which is harder to read against that colour
+    # than the white text the other (darker) mode colours get. Force
+    # white text just for that trace.
+    for (i in seq_along(pl$x$data)) {
+      if (identical(pl$x$data[[i]]$name, "Regional coach")) {
+        pl$x$data[[i]]$hoverlabel <- list(font = list(color = "white"))
+      }
+    }
+
     if (isTRUE(input$show_fare_periods)) {
       rects <- do.call(
         rbind,
