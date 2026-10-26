@@ -50,20 +50,27 @@ reference_year <- 2019
 # never has to be displayed or bridged over with a gap.
 chart_min_date <- as.Date(sprintf("%d-01-01", reference_year + 1))
 
-# Collapse the free_travel_period flag into contiguous date ranges, so the
-# chart can shade whole blocks rather than one rectangle per month.
-free_travel_rects <- function(data) {
-  flagged <- sort(unique(data$date[data$free_travel_period]))
+# Collapse a fare_period level into contiguous date ranges, so the chart can
+# shade whole blocks rather than one rectangle per month.
+fare_period_rects <- function(data, period) {
+  flagged <- sort(unique(data$date[data$fare_period == period]))
   if (length(flagged) == 0) {
-    return(data.frame(xmin = as.Date(character()), xmax = as.Date(character())))
+    return(data.frame(
+      xmin = as.Date(character()),
+      xmax = as.Date(character()),
+      fare_period = character()
+    ))
   }
   run_id <- cumsum(c(1, diff(flagged) > 32))
   data.frame(
     xmin = as.Date(tapply(flagged, run_id, min)),
     # shade through to the start of the month after the last flagged month
-    xmax = as.Date(tapply(flagged, run_id, max)) + 31
+    xmax = as.Date(tapply(flagged, run_id, max)) + 31,
+    fare_period = period
   )
 }
+
+fare_period_colors <- c("Free travel" = "grey45", "Half-price fares" = "grey80")
 
 ui <- page_sidebar(
   title = "Victorian public transport patronage recovery",
@@ -99,8 +106,8 @@ ui <- page_sidebar(
           max = data_max_date
         ),
         input_switch(
-          "show_free_travel",
-          "Highlight free-travel periods",
+          "show_fare_periods",
+          "Highlight free & half-price fare periods",
           value = TRUE
         )
       ),
@@ -110,8 +117,8 @@ ui <- page_sidebar(
           "Built for a ",
           strong("transport policy analyst or journalist"),
           " asking: how has each mode's patronage recovered relative to a ",
-          "pre-pandemic baseline, and did free-travel periods leave a ",
-          "lasting boost?"
+          "pre-pandemic baseline, and did Victoria's 2025-2026 free and ",
+          "half-price fare periods leave a lasting boost?"
         ),
         p(
           "Data: monthly patron boardings by mode, Jan 2018 onward, from ",
@@ -122,9 +129,22 @@ ui <- page_sidebar(
           "recoloured to match its line colour above."
         ),
         p(
-          "Shaded bands mark Victoria's 2025-2026 free-travel periods, ",
-          "during which patronage was estimated with different methods ",
-          "and should be interpreted with caution."
+          "Dark bands mark ",
+          strong("free travel"),
+          " (Dec 2025-May 2026) and light bands mark ",
+          strong("half-price fares"),
+          " (from Jun 2026). Patronage in both periods is inflated by the ",
+          "discount itself, not by organic recovery, so treat any ",
+          "apparent gains during these bands with caution."
+        ),
+        p(
+          "Dec 2025-Mar 2026 is documented in the source dataset's own ",
+          "data quality notes. The extension of free travel through ",
+          "April-May 2026, and half-price fares from June 2026, are not ",
+          "yet reflected in that dataset's documentation; these dates are ",
+          "instead sourced from official Victorian Government media ",
+          "releases (Premier of Victoria, 19 Apr 2026; Transport ",
+          "Victoria, 22 May 2026)."
         ),
         p(
           "Each month is compared to the ",
@@ -168,9 +188,9 @@ ui <- page_sidebar(
       "2019). A mode above 100 has grown beyond its pre-pandemic level ",
       "for that month; a mode still below 100 has not yet recovered. ",
       "Use the date range to zoom into a recovery period, and compare ",
-      "whether lines rise after a shaded free-travel band and hold at ",
-      "the higher level, which would suggest a lasting effect rather ",
-      "than a one-off bump."
+      "whether lines rise during a shaded fare-discount band and then ",
+      "fall back afterwards (a discount-driven bump) or hold at the ",
+      "higher level once the discount ends (a lasting effect)."
     )
   )
 )
@@ -255,7 +275,31 @@ server <- function(input, output, session) {
 
     plot_data <- filtered()
 
-    p <- ggplot(plot_data, aes(date, index, color = mode)) +
+    p <- ggplot(plot_data, aes(date, index, color = mode))
+
+    if (isTRUE(input$show_fare_periods)) {
+      rects <- rbind(
+        fare_period_rects(vicptpatronage::monthly_patronage, "Free travel"),
+        fare_period_rects(vicptpatronage::monthly_patronage, "Half-price fares")
+      )
+      rects <- rects[
+        rects$xmax >= input$date_range[1] & rects$xmin <= input$date_range[2],
+      ]
+      if (nrow(rects) > 0) {
+        p <- p +
+          geom_rect(
+            data = rects,
+            aes(xmin = xmin, xmax = xmax, fill = fare_period),
+            ymin = -Inf,
+            ymax = Inf,
+            alpha = 0.4,
+            inherit.aes = FALSE
+          ) +
+          scale_fill_manual(values = fare_period_colors, name = "Fare discount")
+      }
+    }
+
+    p +
       geom_hline(yintercept = 100, linetype = "dashed", color = "grey50") +
       geom_line(linewidth = 0.9) +
       scale_color_manual(values = mode_colors) +
@@ -265,27 +309,6 @@ server <- function(input, output, session) {
         color = "Mode"
       ) +
       theme_minimal(base_size = 13)
-
-    if (isTRUE(input$show_free_travel)) {
-      rects <- free_travel_rects(vicptpatronage::monthly_patronage)
-      rects <- rects[
-        rects$xmax >= input$date_range[1] & rects$xmin <= input$date_range[2],
-      ]
-      if (nrow(rects) > 0) {
-        p <- p +
-          annotate(
-            "rect",
-            xmin = rects$xmin,
-            xmax = rects$xmax,
-            ymin = -Inf,
-            ymax = Inf,
-            fill = "grey70",
-            alpha = 0.3
-          )
-      }
-    }
-
-    p
   })
 }
 

@@ -13,10 +13,12 @@
 #'   \item{mode}{Transport mode: Metropolitan train, Metropolitan tram,
 #'     Metropolitan bus, Regional train, Regional coach, or Regional bus.}
 #'   \item{patronage}{Count of patron boardings for that mode and month.}
-#'   \item{free_travel_period}{Logical flag for months substantially
-#'     affected by Victoria's 2025-2026 free-travel periods, during which
-#'     patronage was estimated using alternative methods and should be
-#'     interpreted with caution.}
+#'   \item{fare_period}{Factor flagging months substantially affected by a
+#'     Victorian Government fare discount: `"Normal fares"`, `"Free
+#'     travel"` (Dec 2025-May 2026) or `"Half-price fares"` (from Jun
+#'     2026). Patronage during these months is expected to be inflated by
+#'     the discount itself and should not be read as organic recovery or
+#'     demand growth; see Details.}
 #' }
 #'
 #' @details
@@ -25,6 +27,17 @@
 #' `"940930Jan-25"` rather than a plain number. The leading digits were
 #' extracted as the true value; see `data-raw/monthly_patronage.R` for the
 #' full justification and cleaning code.
+#'
+#' `fare_period` draws on two source tiers. Free weekend travel (30 Nov
+#' 2025-1 Feb 2026) and free weekday travel (31 Mar 2026) are documented in
+#' the source dataset's own "Data Quality" notes. The subsequent extension
+#' of free travel through April-May 2026, and half-price fares from 1 June
+#' 2026, are not mentioned in the dataset's documentation (as at the time
+#' this package's data was last refreshed) and are instead sourced from
+#' official Victorian Government media releases: the Premier's "Extra Month
+#' Of Free PT - Then Half-Price Fares For All" (19 Apr 2026) and Transport
+#' Victoria's "Public transport now half price for everyone" (22 May
+#' 2026). See `data-raw/monthly_patronage.R` for full source URLs.
 #'
 #' @source Victorian Department of Transport and Planning, Open Data
 #'   portal, "Monthly public transport patronage by mode",

@@ -35,15 +35,39 @@ raw <- raw |>
   )
 
 # Reshape to long/tidy form: one row per year-month-mode, and flag months
-# affected by the 2025-2026 free-travel periods, during which patronage was
-# estimated using alternative methods (see dataset documentation) and should
-# be interpreted with caution.
-free_travel_months <- tibble::tribble(
-  ~Year , ~Month ,
-  2025L , 12L    , # Nov 30 2025 - Feb 1 2026 free weekends span Dec 2025...
-  2026L ,  1L    , # ...Jan 2026...
-  2026L ,  2L    , # ...and Feb 2026
-  2026L ,  3L # 31 Mar 2026 free weekday travel
+# affected by Victoria's 2025-2026 fare-discount periods (free travel, then
+# half-price fares). Two source tiers here, kept distinct because they carry
+# different levels of authority:
+#
+# 1) The DTP dataset's own "Data Quality" notes document free weekend travel
+#    from 30 Nov 2025 to 1 Feb 2026, and free weekday travel on 31 Mar 2026
+#    (see the dataset page linked above), during which patronage was
+#    estimated using alternative methods rather than myki ticketing data.
+# 2) The DTP dataset's notes do NOT mention that free travel was then
+#    extended as a continuous (not weekend-only) period through April and
+#    May 2026, nor that half-price fares applied from 1 June 2026 onward.
+#    These are sourced instead from official Victorian Government media
+#    releases, since the dataset's own documentation has not been updated
+#    to reflect them:
+#    - https://www.premier.vic.gov.au/extra-month-free-pt-then-half-price-fares-all
+#      (19 Apr 2026): free travel extended to the end of May 2026; half-price
+#      fares from 1 June 2026 "until the end of the year".
+#    - https://transport.vic.gov.au/news-and-resources/news/public-transport-now-half-price-for-everyone
+#      (22 May 2026): half-price fares confirmed "from Monday 1 June 2026
+#      until 1 January 2027".
+#    Patronage during both the free and half-price periods is expected to be
+#    inflated by the fare discount itself, independent of any genuine
+#    recovery or demand trend, so this is flagged as a caveat rather than
+#    silently folded into "free travel".
+fare_discount_months <- tibble::tribble(
+  ~Year , ~Month , ~fare_period       ,
+  2025L , 12L    , "Free travel"      , # Nov 30 2025 - Feb 1 2026 free weekends span Dec 2025...
+  2026L ,  1L    , "Free travel"      , # ...Jan 2026...
+  2026L ,  2L    , "Free travel"      , # ...and Feb 2026
+  2026L ,  3L    , "Free travel"      , # 31 Mar 2026 free weekday travel, later continued...
+  2026L ,  4L    , "Free travel"      , # ...through April (Premier's media release)...
+  2026L ,  5L    , "Free travel"      , # ...and May 2026
+  2026L ,  6L    , "Half-price fares" # Half-price fares from 1 Jun 2026
 )
 
 monthly_patronage <- raw |>
@@ -91,13 +115,25 @@ monthly_patronage <- raw |>
         "Regional bus"
       )
     ),
-    free_travel_period = purrr::map2_lgl(
+    fare_period = purrr::map2_chr(
       year,
       month,
-      \(y, m) any(free_travel_months$Year == y & free_travel_months$Month == m)
+      \(y, m) {
+        match_row <- fare_discount_months$Year == y &
+          fare_discount_months$Month == m
+        if (any(match_row)) {
+          fare_discount_months$fare_period[match_row][1]
+        } else {
+          "Normal fares"
+        }
+      }
+    ),
+    fare_period = factor(
+      fare_period,
+      levels = c("Normal fares", "Free travel", "Half-price fares")
     )
   ) |>
-  select(date, year, month, month_name, mode, patronage, free_travel_period) |>
+  select(date, year, month, month_name, mode, patronage, fare_period) |>
   arrange(mode, date)
 
 usethis::use_data(monthly_patronage, overwrite = TRUE)
