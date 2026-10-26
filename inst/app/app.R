@@ -84,9 +84,45 @@ fare_period_colors <- c(
   "Half-price fares" = "#A6A6A6"
 )
 
+# Colour theming for the app's chrome (sidebar, cards, buttons, headings),
+# inspired by the Victorian Government's broader navy-and-gold digital
+# brand used across vic.gov.au properties (Transport Victoria's own
+# pages block automated fetches, so this draws on the shared state
+# government palette rather than scraping their exact CSS). Note this is
+# distinct from `mode_colors` above, which must stay fixed to PTV's
+# official per-mode colours for the data encoding to remain meaningful.
+app_theme <- bs_theme(
+  version = 5,
+  bg = "#FBFBFA",
+  fg = "#1B1B1B",
+  primary = "#0C2340", # Victorian Government navy
+  secondary = "#C9A227", # warm gold accent
+  base_font = font_collection(
+    font_google("Public Sans", local = TRUE),
+    "Helvetica Neue",
+    "Arial",
+    "sans-serif"
+  ),
+  heading_font = font_collection(
+    font_google("Public Sans", wght = 700, local = TRUE),
+    "Helvetica Neue",
+    "Arial",
+    "sans-serif"
+  )
+) |>
+  bs_add_rules(
+    "
+    .card { border-radius: 0.65rem; box-shadow: 0 2px 10px rgba(12, 35, 64, 0.08); }
+    .accordion-button:not(.collapsed) {
+      background-color: rgba(12, 35, 64, 0.07);
+      color: $primary;
+    }
+    "
+  )
+
 ui <- page_sidebar(
   title = "Victorian public transport patronage recovery",
-  theme = bs_theme(version = 5, primary = "#00558C", secondary = "#6C757D"),
+  theme = app_theme,
   sidebar = sidebar(
     width = 320,
     accordion(
@@ -198,7 +234,10 @@ ui <- page_sidebar(
   ),
   card(
     full_screen = TRUE,
-    card_header("Patronage indexed to the same month in 2019 (2019 = 100)"),
+    card_header(
+      "Patronage indexed to the same month in 2019 (2019 = 100)",
+      class = "bg-primary text-white"
+    ),
     plotlyOutput("trend_plot"),
     card_footer(
       "Each line shows a mode's patronage as a percentage of the same ",
