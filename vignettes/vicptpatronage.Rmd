@@ -1,0 +1,151 @@
+---
+title: "Getting started with vicptpatronage"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with vicptpatronage}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 4.5
+)
+```
+
+## Who this package is for
+
+`vicptpatronage` is built for a **Victorian transport policy analyst or
+journalist** who wants to answer a specific question: *how has each public
+transport mode's patronage recovered relative to its pre-pandemic level,
+and did Victoria's 2025-2026 free-travel and half-price fare periods leave
+a lasting boost, or just a temporary bump?*
+
+The package bundles a cleaned, tidy dataset of monthly Victorian public
+transport patronage, a function for putting different modes on a
+comparable recovery scale, and an interactive Shiny app for exploring the
+question visually.
+
+## Installation
+
+`vicptpatronage` is not on CRAN. Install the development version from
+GitHub:
+
+```r
+# install.packages("remotes")
+remotes::install_github("ETC5523-2026/etc5523-assignment-4-pian0dan")
+```
+
+```{r setup}
+library(vicptpatronage)
+```
+
+## The data: `monthly_patronage`
+
+`monthly_patronage` contains monthly patron boardings for six Victorian
+public transport modes (metropolitan train, tram and bus; V/Line regional
+train, coach and bus), from January 2018 onward, sourced from the
+Victorian Department of Transport and Planning's Open Data portal (CC BY
+4.0).
+
+```{r}
+head(monthly_patronage)
+```
+
+Each row is one mode in one month. The `fare_period` column flags months
+substantially affected by a Victorian Government fare discount:
+
+```{r}
+table(monthly_patronage$fare_period)
+```
+
+See `?monthly_patronage` for the full column reference, including how the
+`fare_period` categories were derived and a data-quality fix applied to
+one corrupted value in the source file.
+
+## Comparing modes on a recovery scale: `patronage_index()`
+
+Raw patronage isn't directly comparable across modes with very different
+volumes (metropolitan train carries millions more passengers a month than
+regional coach), and it also isn't comparable month-to-month on its own,
+because patronage is strongly seasonal — Victorian public transport use is
+routinely 30% higher in March than in January, even outside the pandemic.
+
+`patronage_index()` addresses both problems by expressing each month's
+patronage as a percentage of the *same calendar month* in a reference year
+(2019, the last full year before the pandemic, by default):
+
+```{r}
+indexed <- patronage_index(monthly_patronage, reference_year = 2019)
+head(indexed)
+```
+
+An `index` of 100 means that mode, in that month, matched its 2019 level
+exactly for the same month; above 100 means it has grown beyond its
+pre-pandemic level; below 100 means it hasn't yet recovered.
+
+```{r, message = FALSE}
+library(ggplot2)
+
+indexed |>
+  subset(mode == "Metropolitan train" & date >= as.Date("2020-01-01")) |>
+  ggplot(aes(date, index)) +
+  geom_hline(yintercept = 100, linetype = "dashed", color = "grey50") +
+  geom_line(color = "#0072CE", linewidth = 0.9) +
+  labs(
+    x = NULL,
+    y = "Patronage index (same month, 2019 = 100)",
+    title = "Metropolitan train patronage recovery"
+  ) +
+  theme_minimal()
+```
+
+## Launching the app
+
+The package's Shiny app wraps this same indexing logic in an interactive
+interface. Launch it with:
+
+```r
+run_app()
+```
+
+### Using the app
+
+- **Mode(s) to display**: tick or untick modes to compare. Each checkbox
+  shows that mode's official PTV pictogram.
+- **Date range**: zoom into a specific period, such as a recovery window
+  or a fare-discount period.
+- **Highlight free & half-price fare periods**: shades the months affected
+  by Victoria's 2025-2026 fare discounts, at an intensity roughly matching
+  how large the discount was (a pale band for weekend-only free travel, a
+  medium band for half-price fares, a dark band for free travel every
+  day).
+
+### Interpreting the output
+
+- The main chart shows each selected mode's patronage index over time.
+  Hover over (or on touch devices, tap and drag along) a line to read its
+  exact index value and raw patronage count for a given month.
+- The two value boxes above the chart highlight the most- and
+  least-recovered mode within the selected date range, coloured to match
+  that mode's line in the chart below.
+- To judge whether a fare discount left a *lasting* effect rather than a
+  one-off bump, compare whether a mode's line stays elevated after a
+  shaded discount band ends, or falls back to its prior level.
+
+### A note on limitations
+
+The app's indexing approach controls for seasonality and lets modes with
+very different patronage volumes be compared directly, but it inherits
+some real limitations worth keeping in mind:
+
+- The "most/least recovered" ranking is based on a single latest month,
+  which can still be noisy even after seasonal adjustment.
+- Some fare-discount date boundaries (the extension of free travel through
+  April-May 2026, and half-price fares from June 2026) are sourced from
+  Victorian Government media releases rather than the source dataset's own
+  documentation, which hadn't been updated to reflect them at the time
+  this package's data was last refreshed.

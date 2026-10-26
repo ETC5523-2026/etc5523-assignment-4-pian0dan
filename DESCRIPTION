@@ -29,7 +29,12 @@ Depends:
 LazyData: true
 Suggests: 
     dplyr,
+    knitr,
     purrr,
     readr,
+    rmarkdown,
     stringr,
     tidyr
+VignetteBuilder: knitr
+URL: https://github.com/ETC5523-2026/etc5523-assignment-4-pian0dan, https://etc5523-2026.github.io/etc5523-assignment-4-pian0dan/
+BugReports: https://github.com/ETC5523-2026/etc5523-assignment-4-pian0dan/issues

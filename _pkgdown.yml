@@ -1,0 +1,32 @@
+url: https://etc5523-2026.github.io/etc5523-assignment-4-pian0dan/
+template:
+  bootstrap: 5
+  bslib:
+    primary: "#206b82"
+    secondary: "#3A833A"
+
+home:
+  title: vicptpatronage
+  description: >
+    Explore how Victorian public transport patronage has recovered
+    since the COVID-19 pandemic, by mode, with an interactive Shiny app.
+
+reference:
+- title: Launch the app
+  contents:
+  - run_app
+- title: Data
+  contents:
+  - monthly_patronage
+- title: Analysis functions
+  contents:
+  - patronage_index
+- title: Utilities
+  contents:
+  - '`%>%`'
+
+navbar:
+  structure:
+    left: [intro, reference, articles]
+    right: [search, github]
+
