@@ -300,7 +300,34 @@ server <- function(input, output, session) {
       format(plot_data$patronage, big.mark = ",", scientific = FALSE)
     )
 
-    p <- ggplot(plot_data, aes(date, index, color = mode, group = mode))
+    # plotly has no native translation of geom_rect()/scale_fill_manual(),
+    # so shading is drawn separately as plotly background "shapes" (below)
+    # rather than as a ggplot layer. ggplotly() converts rects into
+    # malformed line-mode traces with garbled legend labels, so the line
+    # chart itself only ever carries mode colour.
+    p <- ggplot(plot_data, aes(date, index, color = mode, group = mode)) +
+      geom_hline(yintercept = 100, linetype = "dashed", color = "grey50") +
+      geom_line(aes(text = tooltip), linewidth = 0.9) +
+      geom_point(aes(text = tooltip), size = 1, alpha = 0) +
+      scale_color_manual(values = mode_colors) +
+      labs(
+        x = NULL,
+        y = "Patronage index (same month, 2019 = 100)",
+        color = "Mode"
+      ) +
+      theme_minimal(base_size = 13)
+
+    pl <- ggplotly(p, tooltip = "text") |>
+      layout(
+        hovermode = "closest",
+        xaxis = list(
+          showspikes = TRUE,
+          spikemode = "across",
+          spikesnap = "cursor",
+          spikedash = "dot"
+        ),
+        legend = list(title = list(text = "Mode"))
+      )
 
     if (isTRUE(input$show_fare_periods)) {
       rects <- do.call(
@@ -317,42 +344,55 @@ server <- function(input, output, session) {
         rects$xmax >= input$date_range[1] & rects$xmin <= input$date_range[2],
       ]
       if (nrow(rects) > 0) {
-        p <- p +
-          geom_rect(
-            data = rects,
-            aes(xmin = xmin, xmax = xmax, fill = fare_period),
-            ymin = -Inf,
-            ymax = Inf,
-            alpha = 0.4,
-            inherit.aes = FALSE
-          ) +
-          scale_fill_manual(values = fare_period_colors, name = "Fare discount")
+        # ggplotly() renders a Date x-axis as numeric days-since-epoch on
+        # a "linear" axis, so shape x0/x1 must match (not Date objects).
+        shapes <- lapply(seq_len(nrow(rects)), function(i) {
+          list(
+            type = "rect",
+            xref = "x",
+            yref = "paper",
+            x0 = as.numeric(rects$xmin[i]),
+            x1 = as.numeric(rects$xmax[i]),
+            y0 = 0,
+            y1 = 1,
+            fillcolor = fare_period_colors[[rects$fare_period[i]]],
+            opacity = 0.4,
+            line = list(width = 0),
+            layer = "below"
+          )
+        })
+        # plotly::layout(shapes = ...) and add_trace(name = ...) both
+        # silently fail to merge onto a ggplotly()-derived object (a
+        # library quirk with its layoutAttrs merge path in this plotly
+        # version), so shapes and the legend swatches below are assigned
+        # directly onto the built object instead.
+        pl$x$layout$shapes <- shapes
+
+        # Background shapes never appear in plotly's legend, so append a
+        # trace with no real data (x/y = NA) per shaded period purely to
+        # give it a correctly-coloured legend swatch.
+        for (period in unique(rects$fare_period)) {
+          pl$x$data[[length(pl$x$data) + 1]] <- list(
+            x = NA_real_,
+            y = NA_real_,
+            type = "scatter",
+            mode = "markers",
+            marker = list(
+              symbol = "square",
+              size = 14,
+              color = fare_period_colors[[period]],
+              opacity = 0.6
+            ),
+            name = period,
+            legendgroup = "fare_period",
+            hoverinfo = "skip",
+            showlegend = TRUE
+          )
+        }
       }
     }
 
-    p <- p +
-      geom_hline(yintercept = 100, linetype = "dashed", color = "grey50") +
-      geom_line(aes(text = tooltip), linewidth = 0.9) +
-      geom_point(aes(text = tooltip), size = 1, alpha = 0) +
-      scale_color_manual(values = mode_colors) +
-      labs(
-        x = NULL,
-        y = "Patronage index (same month, 2019 = 100)",
-        color = "Mode"
-      ) +
-      theme_minimal(base_size = 13)
-
-    ggplotly(p, tooltip = "text") |>
-      layout(
-        hovermode = "closest",
-        xaxis = list(
-          showspikes = TRUE,
-          spikemode = "across",
-          spikesnap = "cursor",
-          spikedash = "dot"
-        ),
-        legend = list(title = list(text = "Mode / fare discount"))
-      )
+    pl
   })
 }
 
