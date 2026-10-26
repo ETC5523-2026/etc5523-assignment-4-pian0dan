@@ -1,0 +1,33 @@
+Package: vicptpatronage
+Title: Explore Victorian Public Transport Patronage Trends
+Version: 0.0.0.9000
+Authors@R: 
+    person("pian0dan", , , "pian0dan@users.noreply.github.com", role = c("aut", "cre"))
+Description: Provides a cleaned, tidy monthly time series of Victorian
+    public transport patronage by mode (metropolitan train, tram and
+    bus; V/Line train and coach; regional bus) from 2018 onwards,
+    together with summary functions and a Shiny app that helps
+    transport policy analysts and journalists explore how each mode's
+    ridership has recovered since the COVID-19 pandemic and whether
+    free-travel periods produced a lasting boost in patronage. Data
+    sourced from the Victorian Department of Transport and Planning
+    Open Data portal, published under a Creative Commons Attribution
+    4.0 licence.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 8.0.0
+Imports: 
+    bslib,
+    ggplot2,
+    magrittr,
+    shiny
+Depends: 
+    R (>= 3.5)
+LazyData: true
+Suggests: 
+    dplyr,
+    purrr,
+    readr,
+    stringr,
+    tidyr
