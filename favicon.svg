@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"><metadata><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"><rdf:Description><dc:creator>RealFaviconGenerator</dc:creator><dc:source>https://realfavicongenerator.net</dc:source></rdf:Description></rdf:RDF></metadata><defs>
+    <style>
+      .body   { fill: #206b82; }
+      .body2  { fill: #2c87a6; }
+      .cab    { fill: #3A833A; }
+      .window { fill: #FBFBFA; stroke: #1B1B1B; stroke-width: 4; }
+      .wheel  { fill: #1B1B1B; }
+      .hub    { fill: #FBFBFA; }
+      .face   { fill: none; stroke: #1B1B1B; stroke-width: 5; stroke-linecap: round; }
+      .outline{ fill: none; stroke: #1B1B1B; stroke-width: 5; stroke-linejoin: round; }
+      .smoke  { fill: #E0E0E0; stroke: #1B1B1B; stroke-width: 3; }
+      .light  { fill: #FF8200; stroke: #1B1B1B; stroke-width: 3; }
+    </style>
+  </defs><polygon points="128,10 230.2,69 230.2,187 128,246 25.8,187 25.8,69" fill="#FBFBFA" stroke="#206b82" stroke-width="6" stroke-linejoin="round"></polygon><g transform="translate(11.54,40.22) scale(0.76)">
+    <!-- smoke puffs -->
+    <circle class="smoke" cx="188" cy="58" r="12"></circle>
+    <circle class="smoke" cx="204" cy="40" r="9"></circle>
+    <circle class="smoke" cx="214" cy="60" r="7"></circle>
+
+    <!-- smokestack -->
+    <rect class="body2 outline" x="150" y="70" width="18" height="30" rx="4"></rect>
+
+    <!-- cab roof -->
+    <rect class="cab outline" x="56" y="78" width="60" height="14" rx="5"></rect>
+
+    <!-- main body -->
+    <rect class="body outline" x="50" y="92" width="150" height="62" rx="18"></rect>
+
+    <!-- cab window -->
+    <rect class="window" x="66" y="100" width="34" height="30" rx="6"></rect>
+    <!-- face on window -->
+    <circle cx="76" cy="113" r="3" fill="#1B1B1B"></circle>
+    <circle cx="90" cy="113" r="3" fill="#1B1B1B"></circle>
+    <path class="face" d="M74 122 Q83 128 92 122"></path>
+
+    <!-- front light -->
+    <circle class="light" cx="192" cy="130" r="10"></circle>
+
+    <!-- buffer beam -->
+    <rect class="cab outline" x="46" y="150" width="158" height="12" rx="4"></rect>
+
+    <!-- wheels -->
+    <circle class="wheel outline" cx="86" cy="178" r="22"></circle>
+    <circle class="hub" cx="86" cy="178" r="8"></circle>
+    <circle class="wheel outline" cx="150" cy="178" r="22"></circle>
+    <circle class="hub" cx="150" cy="178" r="8"></circle>
+    <circle class="wheel outline" cx="186" cy="178" r="15"></circle>
+    <circle class="hub" cx="186" cy="178" r="6"></circle>
+  </g></svg>
