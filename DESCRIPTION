@@ -21,6 +21,7 @@ Imports:
     bslib,
     ggplot2,
     magrittr,
+    plotly,
     shiny,
     thematic
 Depends: 

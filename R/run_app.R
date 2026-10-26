@@ -10,6 +10,7 @@
 #' @importFrom bslib page_sidebar sidebar card card_header
 #' @importFrom ggplot2 ggplot aes geom_line labs
 #' @importFrom thematic thematic_shiny
+#' @importFrom plotly plotlyOutput renderPlotly ggplotly layout
 #' @export
 run_app <- function(...) {
   app_dir <- system.file("app", package = "vicptpatronage")

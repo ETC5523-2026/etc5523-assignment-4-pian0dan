@@ -9,6 +9,7 @@ library(shiny)
 library(bslib)
 library(ggplot2)
 library(thematic)
+library(plotly)
 library(vicptpatronage)
 
 modes <- levels(vicptpatronage::monthly_patronage$mode)
@@ -133,7 +134,7 @@ ui <- page_sidebar(
           "portal (CC BY 4.0). Mode icons are the Department's official ",
           "Transport Pictograms (CC BY 4.0); there is no distinct official ",
           "icon for regional bus, so its icon reuses the bus shape, ",
-          "recoloured to match its line colour above."
+          "recoloured to match its line colour in the plot."
         ),
         p(
           "Shaded bands mark three fare-discount periods of increasing ",
@@ -194,12 +195,14 @@ ui <- page_sidebar(
   card(
     full_screen = TRUE,
     card_header("Patronage indexed to the same month in 2019 (2019 = 100)"),
-    plotOutput("trend_plot"),
+    plotlyOutput("trend_plot"),
     card_footer(
       "Each line shows a mode's patronage as a percentage of the same ",
       "calendar month's patronage in 2019 (e.g. every March vs. March ",
       "2019). A mode above 100 has grown beyond its pre-pandemic level ",
       "for that month; a mode still below 100 has not yet recovered. ",
+      "Hover over (or on touch devices, tap and drag along) a line to ",
+      "read its exact index and raw patronage count for that month. ",
       "Use the date range to zoom into a recovery period, and compare ",
       "whether lines rise during a shaded fare-discount band and then ",
       "fall back afterwards (a discount-driven bump) or hold at the ",
@@ -274,7 +277,7 @@ server <- function(input, output, session) {
     sprintf("Index %.0f", min(d$index))
   })
 
-  output$trend_plot <- renderPlot({
+  output$trend_plot <- renderPlotly({
     validate(
       need(
         valid_dates(),
@@ -287,8 +290,17 @@ server <- function(input, output, session) {
     )
 
     plot_data <- filtered()
+    plot_data$tooltip <- paste0(
+      plot_data$mode,
+      "<br>",
+      format(plot_data$date, "%b %Y"),
+      "<br>Index: ",
+      sprintf("%.1f", plot_data$index),
+      "<br>Patronage: ",
+      format(plot_data$patronage, big.mark = ",", scientific = FALSE)
+    )
 
-    p <- ggplot(plot_data, aes(date, index, color = mode))
+    p <- ggplot(plot_data, aes(date, index, color = mode, group = mode))
 
     if (isTRUE(input$show_fare_periods)) {
       rects <- do.call(
@@ -318,9 +330,10 @@ server <- function(input, output, session) {
       }
     }
 
-    p +
+    p <- p +
       geom_hline(yintercept = 100, linetype = "dashed", color = "grey50") +
-      geom_line(linewidth = 0.9) +
+      geom_line(aes(text = tooltip), linewidth = 0.9) +
+      geom_point(aes(text = tooltip), size = 1, alpha = 0) +
       scale_color_manual(values = mode_colors) +
       labs(
         x = NULL,
@@ -328,6 +341,18 @@ server <- function(input, output, session) {
         color = "Mode"
       ) +
       theme_minimal(base_size = 13)
+
+    ggplotly(p, tooltip = "text") |>
+      layout(
+        hovermode = "closest",
+        xaxis = list(
+          showspikes = TRUE,
+          spikemode = "across",
+          spikesnap = "cursor",
+          spikedash = "dot"
+        ),
+        legend = list(title = list(text = "Mode / fare discount"))
+      )
   })
 }
 
