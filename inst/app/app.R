@@ -36,7 +36,7 @@ ui <- page_sidebar(
   title = "Victorian public transport patronage recovery",
   theme = app_theme,
   tags$head(
-    tags$link(rel = "icon", type = "image/png", href = "favicon-v2.png")
+    tags$link(rel = "icon", type = "image/png", href = "favicon-v3.png")
   ),
   # Light grey canvas behind the main content so the white cards/value
   # boxes read as a dashboard-style layout; purely a CSS class, no

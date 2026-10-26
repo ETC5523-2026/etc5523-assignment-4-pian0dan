@@ -4,6 +4,12 @@ template:
   bslib:
     primary: "#206b82"
     secondary: "#3A833A"
+  opengraph:
+    image:
+      src: man/figures/logo.png
+      alt: "vicptpatronage hex logo: a cartoon steam train"
+    twitter:
+      card: summary
 
 home:
   title: vicptpatronage
