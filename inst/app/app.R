@@ -73,11 +73,15 @@ fare_period_rects <- function(data, period) {
 
 # Shading intensity roughly tracks discount intensity: weekend-only free
 # travel affected far fewer days per month than the later every-day free
-# and half-price periods.
+# and half-price periods. These are injected directly into plotly's JSON
+# (shapes/marker specs below), bypassing ggplot2's usual colour-to-hex
+# translation, so they must be real hex codes: plotly.js's CSS parser
+# silently rejects R-only names like "grey88" (not valid CSS), leaving
+# shading invisible and legend swatches falling back to default colours.
 fare_period_colors <- c(
-  "Weekend free travel" = "grey88",
-  "Free travel (every day)" = "grey40",
-  "Half-price fares" = "grey65"
+  "Weekend free travel" = "#E0E0E0",
+  "Free travel (every day)" = "#666666",
+  "Half-price fares" = "#A6A6A6"
 )
 
 ui <- page_sidebar(
