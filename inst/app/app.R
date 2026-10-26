@@ -31,15 +31,16 @@ mode_colors <- c(
 )
 
 # Pictogram shown next to each mode in the filter checkboxes. PTV has no
-# distinct symbol for regional (vs. metropolitan) bus, so both share the
-# generic bus icon.
+# distinct symbol for regional (vs. metropolitan) bus, so "Regional bus"
+# reuses the generic bus shape but recoloured to match its line colour
+# above (see inst/app/www/icons/ATTRIBUTION.md for provenance).
 mode_icons <- c(
   "Metropolitan train" = "icons/train.png",
   "Metropolitan tram" = "icons/tram.png",
   "Metropolitan bus" = "icons/bus.png",
   "Regional train" = "icons/regional_train.png",
   "Regional coach" = "icons/coach.png",
-  "Regional bus" = "icons/bus.png"
+  "Regional bus" = "icons/regional_bus.png"
 )
 reference_year <- 2019
 # The chart's selectable range starts the year after the reference year, so
@@ -115,7 +116,8 @@ ui <- page_sidebar(
           "the Victorian Department of Transport and Planning Open Data ",
           "portal (CC BY 4.0). Mode icons are the Department's official ",
           "Transport Pictograms (CC BY 4.0); there is no distinct official ",
-          "icon for regional bus, so it shares the metropolitan bus icon."
+          "icon for regional bus, so its icon reuses the bus shape, ",
+          "recoloured to match its line colour above."
         ),
         p(
           "Shaded bands mark Victoria's 2025-2026 free-travel periods, ",
