@@ -7,6 +7,10 @@
 #'
 #' @param ... Additional arguments passed on to [shiny::runApp()].
 #'
+#' @return No return value. This function is called for its side effect of
+#'   launching the Shiny app in the default web browser (or RStudio/Positron
+#'   viewer pane).
+#'
 #' @importFrom bslib page_sidebar sidebar card card_header
 #' @importFrom ggplot2 ggplot aes geom_line labs
 #' @importFrom thematic thematic_shiny

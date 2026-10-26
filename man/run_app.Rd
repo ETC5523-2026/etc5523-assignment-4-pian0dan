@@ -9,6 +9,11 @@ run_app(...)
 \arguments{
 \item{...}{Additional arguments passed on to \code{\link[shiny:runApp]{shiny::runApp()}}.}
 }
+\value{
+No return value. This function is called for its side effect of
+launching the Shiny app in the default web browser (or RStudio/Positron
+viewer pane).
+}
 \description{
 Launches an interactive Shiny app that lets a transport policy analyst
 or journalist explore how each Victorian public transport mode's
