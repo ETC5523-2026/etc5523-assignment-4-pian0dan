@@ -19,6 +19,8 @@ Licensed under Creative Commons Attribution 4.0
 PTV's pictogram set has no separate symbol for regional (as opposed to
 metropolitan) bus services. `regional_bus.png` is the official "Bus" shape
 from `PICTO_MODE_Bus.svg`, recoloured from its original orange (#FF8200)
-to #92469A to match the app's "Regional bus" line colour (itself a shade
-interpolated between the two official regional colours, since PTV defines
-no official colour for regional bus specifically).
+to #7A3AC9 to match the app's "Regional bus" line colour. PTV defines no
+official colour for regional bus specifically; rather than interpolating
+between the two official regional purples (train #7F0D82, coach #A57FB2),
+#7A3AC9 is a more blue-violet purple chosen to stay clearly distinct from
+both.

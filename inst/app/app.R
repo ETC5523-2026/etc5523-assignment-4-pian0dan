@@ -18,16 +18,18 @@ data_max_date <- max(vicptpatronage::monthly_patronage$date)
 # DTP's "Transport Pictograms" asset files (CC BY 4.0; see
 # inst/app/www/icons/ATTRIBUTION.md): blue for metropolitan train, green for
 # tram, orange for bus, and purple for regional services. PTV's pictogram
-# set only distinguishes two regional shades (train, coach); "Regional bus"
-# has no official colour of its own, so it uses a third purple interpolated
-# between the two official regional shades to stay visually distinct.
+# set only distinguishes two regional shades (train, coach), both a
+# magenta-leaning purple (hue ~285-300deg); "Regional bus" has no official
+# colour of its own, so it uses a third, more blue-violet purple (hue
+# ~267deg) rather than a simple interpolation, so it reads as clearly
+# distinct from both official shades rather than a shade "in between" them.
 mode_colors <- c(
   "Metropolitan train" = "#0072CE",
   "Metropolitan tram" = "#78BE20",
   "Metropolitan bus" = "#FF8200",
   "Regional train" = "#7F0D82",
   "Regional coach" = "#A57FB2",
-  "Regional bus" = "#92469A"
+  "Regional bus" = "#7A3AC9"
 )
 
 # Pictogram shown next to each mode in the filter checkboxes. PTV has no
