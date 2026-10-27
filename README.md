@@ -75,7 +75,7 @@ throughout the development of this assignment, for:
 - researching and sourcing the app's colour palette and icons from official
   Public Transport Victoria assets, and verifying fare-discount dates
   against official government sources;
-- identifying and correcting a methodological issue in the patronage
+- correcting a methodological issue in the patronage
   indexing approach (an unaddressed seasonality confound, and later an
   overstated free-travel period that didn't distinguish weekend-only from
   every-day free travel);
