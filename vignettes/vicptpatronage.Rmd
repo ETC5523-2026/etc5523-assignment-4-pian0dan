@@ -46,8 +46,8 @@ library(vicptpatronage)
 ## The data: `monthly_patronage`
 
 `monthly_patronage` contains monthly patron boardings for six Victorian
-public transport modes (metropolitan train, tram and bus; V/Line regional
-train, coach and bus), from January 2018 onward, sourced from the
+public transport modes (metropolitan train, tram and bus; regional train,
+coach and bus), from January 2018 to June 2026, sourced from the
 Victorian Department of Transport and Planning's Open Data portal (CC BY
 4.0).
 
@@ -55,8 +55,12 @@ Victorian Department of Transport and Planning's Open Data portal (CC BY
 head(monthly_patronage)
 ```
 
-Each row is one mode in one month. The `fare_period` column flags months
-substantially affected by a Victorian Government fare discount:
+Each row is one mode in one month, with columns `date`, `year`, `month`,
+`month_name`, `mode`, `patronage` and `fare_period`. The `fare_period`
+column flags months substantially affected by a Victorian Government fare
+discount (`"Normal fares"`, `"Weekend free travel"`,
+`"Free travel (every day)"` or `"Half-price fares"`); counts below are
+rows, i.e. mode-months:
 
 ```{r}
 table(monthly_patronage$fare_period)
@@ -85,7 +89,11 @@ head(indexed)
 
 An `index` of 100 means that mode, in that month, matched its 2019 level
 exactly for the same month; above 100 means it has grown beyond its
-pre-pandemic level; below 100 means it hasn't yet recovered.
+pre-pandemic level; below 100 means it hasn't yet recovered. Every month
+in the reference year is compared to itself, so 2019 is always exactly
+100 and carries no information. The function stops with an error if
+`data` lacks the required columns (`date`, `year`, `month`, `mode`,
+`patronage`) or has no rows for `reference_year`.
 
 ```{r, message = FALSE}
 library(ggplot2)
@@ -112,12 +120,19 @@ interface. Launch it with:
 run_app()
 ```
 
+Any extra arguments are passed on to `shiny::runApp()`, for example
+`run_app(launch.browser = TRUE)`. The sidebar has a "Filters" panel and an
+"About this app" panel describing the data sources and method.
+
 ### Using the app
 
 - **Mode(s) to display**: tick or untick modes to compare. Each checkbox
-  shows that mode's official PTV pictogram.
+  shows an icon from the Department's official Transport Pictograms (CC BY
+  4.0); regional bus reuses the bus shape, recoloured to match its line.
 - **Date range**: zoom into a specific period, such as a recovery window
-  or a fare-discount period.
+  or a fare-discount period. The range starts in January 2020 (the year
+  after the 2019 reference year), and a start date after the end date
+  shows a prompt instead of a chart.
 - **Highlight free & half-price fare periods**: shades the months affected
   by Victoria's 2025-2026 fare discounts, at an intensity roughly matching
   how large the discount was (a pale band for weekend-only free travel, a
@@ -128,7 +143,8 @@ run_app()
 
 - The main chart shows each selected mode's patronage index over time.
   Hover over (or on touch devices, tap and drag along) a line to read its
-  exact index value and raw patronage count for a given month.
+  exact index value and raw patronage count for a given month. If no
+  mode is selected, the chart asks you to choose at least one.
 - The two value boxes above the chart highlight the most- and
   least-recovered mode within the selected date range, coloured to match
   that mode's line in the chart below.
