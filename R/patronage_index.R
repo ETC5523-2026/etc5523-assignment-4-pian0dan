@@ -17,9 +17,10 @@
 #'   to 2019, the last full year before the COVID-19 pandemic affected
 #'   patronage.
 #'
-#' @return A data frame with the same rows as `data`, plus an `index`
-#'   column giving each mode's patronage as a percentage of the same
-#'   calendar month's patronage in `reference_year`.
+#' @return A data frame with the same rows as `data`, sorted by `mode` and
+#'   `date`, plus two columns: `baseline_patronage`, the patronage for the
+#'   same mode and calendar month in `reference_year`, and `index`, each
+#'   row's patronage as a percentage of that baseline.
 #'
 #' @examples
 #' indexed <- patronage_index(monthly_patronage, reference_year = 2019)
@@ -28,7 +29,9 @@
 #' @export
 patronage_index <- function(data, reference_year = 2019) {
   if (!all(c("date", "year", "month", "mode", "patronage") %in% names(data))) {
-    stop("`data` must contain `date`, `year`, `month`, `mode` and `patronage` columns.")
+    stop(
+      "`data` must contain `date`, `year`, `month`, `mode` and `patronage` columns."
+    )
   }
 
   baseline <- data[data$year == reference_year, c("mode", "month", "patronage")]
@@ -36,7 +39,8 @@ patronage_index <- function(data, reference_year = 2019) {
 
   if (nrow(baseline) == 0) {
     stop(
-      "No rows found for reference_year = ", reference_year,
+      "No rows found for reference_year = ",
+      reference_year,
       ". Check that this year exists in `data`."
     )
   }

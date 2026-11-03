@@ -17,9 +17,10 @@ to 2019, the last full year before the COVID-19 pandemic affected
 patronage.}
 }
 \value{
-A data frame with the same rows as \code{data}, plus an \code{index}
-column giving each mode's patronage as a percentage of the same
-calendar month's patronage in \code{reference_year}.
+A data frame with the same rows as \code{data}, sorted by \code{mode} and
+\code{date}, plus two columns: \code{baseline_patronage}, the patronage for the
+same mode and calendar month in \code{reference_year}, and \code{index}, each
+row's patronage as a percentage of that baseline.
 }
 \description{
 Rescales each mode's monthly patronage as a percentage of that \emph{same
