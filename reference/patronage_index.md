@@ -32,9 +32,10 @@ patronage_index(data, reference_year = 2019)
 
 ## Value
 
-A data frame with the same rows as `data`, plus an `index` column giving
-each mode's patronage as a percentage of the same calendar month's
-patronage in `reference_year`.
+A data frame with the same rows as `data`, sorted by `mode` and `date`,
+plus two columns: `baseline_patronage`, the patronage for the same mode
+and calendar month in `reference_year`, and `index`, each row's
+patronage as a percentage of that baseline.
 
 ## Examples
 

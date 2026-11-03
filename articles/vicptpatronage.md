@@ -108,6 +108,11 @@ head(indexed)
 #> 174           19099513 100.96988
 ```
 
+The result keeps every row of `monthly_patronage`, sorted by mode and
+date, and adds two columns: `baseline_patronage`, the same mode’s
+patronage in that calendar month of the reference year, and `index`, the
+month’s patronage as a percentage of that baseline.
+
 An `index` of 100 means that mode, in that month, matched its 2019 level
 exactly for the same month; above 100 means it has grown beyond its
 pre-pandemic level; below 100 means it hasn’t yet recovered. Every month

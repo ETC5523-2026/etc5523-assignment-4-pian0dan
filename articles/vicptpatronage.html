@@ -157,6 +157,11 @@ pandemic, by default):</p>
 <span><span class="co">#&gt; 155           18579825 109.32310</span></span>
 <span><span class="co">#&gt; 165           23045436  98.79807</span></span>
 <span><span class="co">#&gt; 174           19099513 100.96988</span></span></code></pre></div>
+<p>The result keeps every row of <code>monthly_patronage</code>, sorted
+by mode and date, and adds two columns: <code>baseline_patronage</code>,
+the same mode’s patronage in that calendar month of the reference year,
+and <code>index</code>, the month’s patronage as a percentage of that
+baseline.</p>
 <p>An <code>index</code> of 100 means that mode, in that month, matched
 its 2019 level exactly for the same month; above 100 means it has grown
 beyond its pre-pandemic level; below 100 means it hasn’t yet recovered.

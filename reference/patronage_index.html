@@ -81,9 +81,10 @@ patronage.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A data frame with the same rows as <code>data</code>, plus an <code>index</code>
-column giving each mode's patronage as a percentage of the same
-calendar month's patronage in <code>reference_year</code>.</p>
+    <p>A data frame with the same rows as <code>data</code>, sorted by <code>mode</code> and
+<code>date</code>, plus two columns: <code>baseline_patronage</code>, the patronage for the
+same mode and calendar month in <code>reference_year</code>, and <code>index</code>, each
+row's patronage as a percentage of that baseline.</p>
     </div>
 
     <div class="section level2">
