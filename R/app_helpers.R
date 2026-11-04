@@ -22,9 +22,9 @@ fare_period_rects <- function(data, period) {
   }
   run_id <- cumsum(c(1, diff(flagged) > 32))
   data.frame(
-    xmin = as.Date(tapply(flagged, run_id, min)),
+    xmin = as.Date(as.vector(tapply(flagged, run_id, min))),
     # shade through to the start of the month after the last flagged month
-    xmax = as.Date(tapply(flagged, run_id, max)) + 31,
+    xmax = as.Date(as.vector(tapply(flagged, run_id, max))) + 31,
     fare_period = period
   )
 }
