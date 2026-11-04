@@ -61,7 +61,9 @@ source URLs.
 
 Patronage figures are estimates, not exact counts: not every trip can be
 counted, for example because some passengers travel without touching on
-(fare evasion). During the fully free travel period (Apr-May 2026)
+(fare evasion). The true number of trips could be higher or lower than
+the estimate, since it is unknown whether the estimation method fully
+accounts for uncounted trips or over-corrects for them. During the fully free travel period (Apr-May 2026)
 passengers were not required to tap on, so many trips were not recorded
 and patronage for those months is a best guess based on historical
 patterns and predictions rather than a direct count.

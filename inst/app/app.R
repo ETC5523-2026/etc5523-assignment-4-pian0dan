@@ -144,7 +144,9 @@ ui <- page_sidebar(
           strong("Limitations: "),
           "patronage figures are estimates, not exact counts, because not ",
           "every trip can be counted (for example, some passengers travel ",
-          "without touching on). During the fully free travel period ",
+          "without touching on), and the true number of trips could be ",
+          "higher or lower than the estimate. During the fully free ",
+          "travel period ",
           "(April-May 2026) passengers were not required to tap on, so ",
           "those months are best guesses based on historical patterns ",
           "and predictions. Read them with extra caution."
