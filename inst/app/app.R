@@ -139,6 +139,15 @@ ui <- page_sidebar(
         p(
           "The chart starts in 2020: every 2019 month is compared to ",
           "itself, so 2019 has no meaningful index value to plot."
+        ),
+        p(
+          strong("Limitations: "),
+          "patronage figures are estimates, not exact counts, because not ",
+          "every trip can be counted (for example, some passengers travel ",
+          "without touching on). During the fully free travel period ",
+          "(April-May 2026) passengers were not required to tap on, so ",
+          "those months are best guesses based on historical patterns ",
+          "and predictions. Read them with extra caution."
         )
       )
     )

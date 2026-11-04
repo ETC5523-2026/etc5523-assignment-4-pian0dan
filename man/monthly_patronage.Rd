@@ -57,4 +57,14 @@ Apr 2026) and Transport Victoria's "Public transport now half price for
 everyone" (22 May 2026). See \code{data-raw/monthly_patronage.R} for full
 source URLs.
 }
+\section{Limitations}{
+
+Patronage figures are estimates, not exact counts: not every trip can be
+counted, for example because some passengers travel without touching on
+(fare evasion). During the fully free travel period (Apr-May 2026)
+passengers were not required to tap on, so many trips were not recorded
+and patronage for those months is a best guess based on historical
+patterns and predictions rather than a direct count.
+}
+
 \keyword{datasets}

@@ -44,6 +44,14 @@
 #' everyone" (22 May 2026). See `data-raw/monthly_patronage.R` for full
 #' source URLs.
 #'
+#' @section Limitations:
+#' Patronage figures are estimates, not exact counts: not every trip can be
+#' counted, for example because some passengers travel without touching on
+#' (fare evasion). During the fully free travel period (Apr-May 2026)
+#' passengers were not required to tap on, so many trips were not recorded
+#' and patronage for those months is a best guess based on historical
+#' patterns and predictions rather than a direct count.
+#'
 #' @source Victorian Department of Transport and Planning, Open Data
 #'   portal, "Monthly public transport patronage by mode",
 #'   \url{https://opendata.transport.vic.gov.au/dataset/monthly-public-transport-patronage-by-mode},
