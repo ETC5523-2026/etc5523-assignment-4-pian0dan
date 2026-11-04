@@ -79,9 +79,9 @@ value in the source file.
 Raw patronage isn’t directly comparable across modes with very different
 volumes (metropolitan train carries millions more passengers a month
 than regional coach), and it also isn’t comparable month-to-month on its
-own, because patronage is strongly seasonal — Victorian public transport
-use is routinely 30% higher in March than in January, even outside the
-pandemic.
+own, because patronage is strongly seasonal. In 2018-19, each mode’s
+busiest month was roughly 20-75% above its quietest, depending on the
+mode (for metropolitan trains, about 30-35%).
 
 [`patronage_index()`](https://etc5523-2026.github.io/etc5523-assignment-4-pian0dan/reference/patronage_index.md)
 addresses both problems by expressing each month’s patronage as a
@@ -164,8 +164,10 @@ method.
   line.
 - **Date range**: zoom into a specific period, such as a recovery window
   or a fare-discount period. The range starts in January 2020 (the year
-  after the 2019 reference year), and a start date after the end date
-  shows a prompt instead of a chart.
+  after the 2019 reference year). The data are monthly, so any day you
+  pick selects that whole month (17 March 2024 is treated as March
+  2024). An incomplete range, a start month after the end month, or a
+  range with no data shows a prompt instead of a chart.
 - **Highlight free & half-price fare periods**: shades the months
   affected by Victoria’s 2025-2026 fare discounts, at an intensity
   roughly matching how large the discount was (a pale band for
