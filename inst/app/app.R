@@ -124,9 +124,17 @@ ui <- page_sidebar(
           strong("same calendar month"),
           " in 2019 (e.g. March vs. March 2019), rather than to a single ",
           "fixed baseline month. Public transport patronage varies by ",
-          "around 30% across the year even outside the pandemic, so ",
-          "comparing like-for-like months avoids mistaking normal ",
-          "seasonal swings for changes in recovery."
+          "a lot across the year even outside the pandemic (in 2018-19 ",
+          "a mode's busiest month was roughly 20-75% above its quietest, ",
+          "depending on the mode), so comparing like-for-like months ",
+          "avoids mistaking normal seasonal swings for changes in ",
+          "recovery."
+        ),
+        p(
+          strong("Months, not days: "),
+          "the data are monthly, so picking any day within a month ",
+          "selects that whole month (e.g. 17 March 2024 is treated as ",
+          "March 2024)."
         ),
         p(
           "The chart starts in 2020: every 2019 month is compared to ",
@@ -166,8 +174,22 @@ ui <- page_sidebar(
 server <- function(input, output, session) {
   thematic_shiny(font = "auto")
 
-  valid_dates <- reactive({
-    input$date_range[1] <= input$date_range[2]
+  # The data are monthly (dated the 1st), so snap both ends of the range to
+  # the first of their month. Any day picked within a month selects that
+  # whole month. Returns NA for a cleared/invalid input.
+  month_start <- function(x) {
+    if (length(x) != 1 || is.na(x)) {
+      return(as.Date(NA))
+    }
+    as.Date(format(x, "%Y-%m-01"))
+  }
+
+  range_months <- reactive({
+    r <- input$date_range
+    list(
+      start = month_start(if (length(r) >= 1) r[1] else NULL),
+      end = month_start(if (length(r) >= 2) r[2] else NULL)
+    )
   })
 
   indexed <- reactive({
@@ -177,25 +199,56 @@ server <- function(input, output, session) {
     )
   })
 
-  filtered <- reactive({
-    req(valid_dates())
+  # NULL when the current selection can be charted, otherwise a message
+  # explaining what the user needs to change.
+  problem <- reactive({
+    r <- range_months()
+    if (is.na(r$start) || is.na(r$end)) {
+      return(
+        "The date range is incomplete. Enter both a start and an end date."
+      )
+    }
+    if (r$start > r$end) {
+      return(
+        "The start month is after the end month. Choose a start date in or before the end month."
+      )
+    }
+    if (length(input$modes) == 0) {
+      return(
+        "No mode selected. Choose at least one mode in the sidebar to display results."
+      )
+    }
+    if (nrow(filtered_raw()) == 0) {
+      return(
+        "No data for this selection. Widen the date range (data are available from January 2020)."
+      )
+    }
+    NULL
+  })
+
+  filtered_raw <- reactive({
+    r <- range_months()
+    if (is.na(r$start) || is.na(r$end)) {
+      return(indexed()[0, ])
+    }
     subset(
       indexed(),
       mode %in%
         input$modes &
-        date >= input$date_range[1] &
-        date <= input$date_range[2]
+        date >= max(r$start, chart_min_date) &
+        date <= r$end
     )
+  })
+
+  filtered <- reactive({
+    req(is.null(problem()))
+    filtered_raw()
   })
 
   # Latest index value per mode within the selected range, used for both
   # the value boxes and to rank "most/least recovered".
   latest_by_mode <- reactive({
-    req(valid_dates(), length(input$modes) > 0)
     d <- filtered()
-    if (nrow(d) == 0) {
-      return(d)
-    }
     d <- d[order(d$mode, d$date), ]
     do.call(rbind, lapply(split(d, d$mode), function(x) x[nrow(x), ]))
   })
@@ -203,18 +256,20 @@ server <- function(input, output, session) {
   # Theme each value box's background to match the line colour of the
   # mode it's highlighting, so the "most/least recovered" callouts read
   # as a direct pointer back to a specific line in the chart below.
-  recovered_box <- function(d, which = c("max", "min"), title) {
+  recovered_box <- function(which = c("max", "min"), title) {
     which <- match.arg(which)
-    if (is.null(d) || nrow(d) == 0) {
+    msg <- problem()
+    if (!is.null(msg)) {
       return(
         value_box(
           title = title,
-          value = "-",
-          showcase = "",
+          value = "No data to show",
+          p(msg),
           theme = "secondary"
         )
       )
     }
+    d <- latest_by_mode()
     i <- if (which == "max") which.max(d$index) else which.min(d$index)
     mode <- as.character(d$mode[i])
     value_box(
@@ -227,30 +282,19 @@ server <- function(input, output, session) {
 
   output$most_recovered_box <- renderUI({
     recovered_box(
-      latest_by_mode(),
       which = "max",
       title = "Most recovered mode (selected range)"
     )
   })
   output$least_recovered_box <- renderUI({
     recovered_box(
-      latest_by_mode(),
       which = "min",
       title = "Least recovered mode (selected range)"
     )
   })
 
   output$trend_plot <- renderPlotly({
-    validate(
-      need(
-        valid_dates(),
-        "The start date is after the end date. Choose a start date before the end date."
-      ),
-      need(
-        length(input$modes) > 0,
-        "No mode selected. Choose at least one mode in the sidebar to display the chart."
-      )
-    )
+    validate(need(is.null(problem()), problem()))
 
     plot_data <- filtered()
     plot_data$tooltip <- paste0(
@@ -314,9 +358,8 @@ server <- function(input, output, session) {
           function(p) fare_period_rects(vicptpatronage::monthly_patronage, p)
         )
       )
-      rects <- rects[
-        rects$xmax >= input$date_range[1] & rects$xmin <= input$date_range[2],
-      ]
+      r <- range_months()
+      rects <- rects[rects$xmax >= r$start & rects$xmin <= r$end, ]
       if (nrow(rects) > 0) {
         # ggplotly() renders a Date x-axis as numeric days-since-epoch on
         # a "linear" axis, so shape x0/x1 must match (not Date objects).
