@@ -197,8 +197,9 @@ some real limitations worth keeping in mind:
   which can still be noisy even after seasonal adjustment.
 - Patronage figures are estimates, not exact counts. Not every trip can
   be counted, for example because some passengers travel without
-  touching on (fare evasion), so the true number of trips is likely
-  somewhat higher than recorded.
+  touching on (fare evasion). The true number of trips could be higher
+  or lower than the estimate: we don’t know whether the estimation
+  method fully accounts for uncounted trips, or over-corrects for them.
 - During the fully free travel periods, passengers were not required to
   tap on, so many trips were not recorded. Patronage for those periods
   is a best guess based on historical patterns and predictions, not a
