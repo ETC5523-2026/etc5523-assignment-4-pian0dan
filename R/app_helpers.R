@@ -2,8 +2,15 @@
 # Non-exported; accessed from the app via `:::`, since the app ships inside
 # this package rather than as a separate consumer of its public API.
 
-# Collapse a fare_period level into contiguous date ranges, so the chart can
-# shade whole blocks rather than one rectangle per month.
+#' Collapse a fare period into contiguous date ranges
+#'
+#' Lets the chart shade whole blocks rather than one rectangle per month.
+#'
+#' @param data A data frame with `date` and `fare_period` columns, such as
+#'   [monthly_patronage].
+#' @param period A single `fare_period` level.
+#' @return A data frame with columns `xmin`, `xmax` and `fare_period`.
+#' @noRd
 fare_period_rects <- function(data, period) {
   flagged <- sort(unique(data$date[data$fare_period == period]))
   if (length(flagged) == 0) {

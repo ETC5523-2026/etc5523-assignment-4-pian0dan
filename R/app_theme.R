@@ -12,6 +12,8 @@
 # colour of its own, so it uses a third, more blue-violet purple (hue
 # ~267deg) rather than a simple interpolation, so it reads as clearly
 # distinct from both official shades rather than a shade "in between" them.
+#' Fixed PTV colour per mode (internal)
+#' @noRd
 mode_colors <- c(
   "Metropolitan train" = "#0072CE",
   "Metropolitan tram" = "#78BE20",
@@ -25,6 +27,8 @@ mode_colors <- c(
 # distinct symbol for regional (vs. metropolitan) bus, so "Regional bus"
 # reuses the generic bus shape but recoloured to match its line colour
 # above (see inst/app/www/icons/ATTRIBUTION.md for provenance).
+#' Pictogram path per mode (internal)
+#' @noRd
 mode_icons <- c(
   "Metropolitan train" = "icons/train.png",
   "Metropolitan tram" = "icons/tram.png",
@@ -41,6 +45,8 @@ mode_icons <- c(
 # translation, so they must be real hex codes: plotly.js's CSS parser
 # silently rejects R-only names like "grey88" (not valid CSS), leaving
 # shading invisible and legend swatches falling back to default colours.
+#' Shading colour per fare period (internal)
+#' @noRd
 fare_period_colors <- c(
   "Weekend free travel" = "#E0E0E0",
   "Free travel (every day)" = "#666666",
@@ -61,6 +67,8 @@ fare_period_colors <- c(
 # This is distinct from `mode_colors` above, which must stay fixed to
 # PTV's official per-mode colours for the data encoding to remain
 # meaningful; only the surrounding chrome is themed here.
+#' bslib theme for the Shiny app (internal)
+#' @noRd
 app_theme <- bslib::bs_theme(
   version = 5,
   bg = "#FBFBFA",
