@@ -4,10 +4,10 @@
 #' calendar month* in a chosen reference year (e.g. March is compared to
 #' the reference year's March, January to the reference year's January).
 #' This avoids conflating genuine recovery with ordinary seasonal
-#' variation: Victorian metropolitan train patronage, for example, is
-#' routinely 30-35% higher in March or May than in January even in
-#' pre-pandemic years, so indexing every month to a single fixed baseline
-#' month would make seasonal swings look like changes in recovery.
+#' variation: in 2018-19, each mode's busiest month was roughly 20-75%
+#' above its quietest (about 30-35% for metropolitan trains), so indexing
+#' every month to a single fixed baseline month would make seasonal swings
+#' look like changes in recovery.
 #'
 #' @param data A data frame with the same structure as [monthly_patronage],
 #'   containing at least the columns `date`, `year`, `month`, `mode` and
